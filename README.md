@@ -1,4 +1,5 @@
-# Django Api接口框架
+# 蛮吉 学习项目
+## Django Api接口框架
 ### DRF前置基础知识
 1. Python基础知识
 Django 是使用 Python 编写的，因此熟悉 Python 语法和基本概念是必要的。你需要了解变量、函数、类、模块等基本概念，并熟悉 Python 的面向对象编程（OOP）思想。
