@@ -234,9 +234,12 @@ class AssetsListView(View):
         except Assets.DoesNotExist:
             data = {'code': 404, 'message': 'Asset not found'}
             return JsonResponse(data, status=404)
-
-        # 删除资产对象
-        asset.delete()
+        #
+        # # 删除资产对象
+        # asset.delete()
+        asset.is_delete = True
+        asset.save()
 
         data = {'code': 204, 'message': 'Asset deleted'}
         return JsonResponse(data, status=204)
+

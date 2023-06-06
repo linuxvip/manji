@@ -1,12 +1,14 @@
 from rest_framework import generics, pagination
 from .models import AssetsCategory, Assets
-from .serializers import AssetsCategorySerializer, AssetsSerializer
-from .renderers import CustomJSONRenderer
+from .serializers import AssetsCategorySerializer, AssetsListSerializer
 
 
 class CustomPagination(pagination.PageNumberPagination):
+    """
+    自定义分页类
+    """
     page_size = 10
-    page_size_query_param = 'per_page'
+    page_size_query_param = 'page_size'
     max_page_size = 100
 
 
@@ -23,10 +25,10 @@ class AssetsCategoryDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 class AssetsAPIView(generics.ListCreateAPIView):
     queryset = Assets.objects.all()
-    serializer_class = AssetsSerializer
+    serializer_class = AssetsListSerializer
     pagination_class = CustomPagination
 
 
 class AssetsDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Assets.objects.all()
-    serializer_class = AssetsSerializer
+    serializer_class = AssetsListSerializer

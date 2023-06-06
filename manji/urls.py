@@ -23,6 +23,6 @@ urlpatterns = [
     path('api/database/', include('database.urls')),
 
     # 常用示例url
-    # path('api/assets/', include('assets.urls'))
+    path('api/assets/', include('assets.urls'))
 
 ]

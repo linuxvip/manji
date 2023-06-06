@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, pagination
 from .models import AssetsCategory, Assets
-from .serializers import AssetsCategorySerializer, AssetsSerializer
+from .serializers import AssetsCategorySerializer, AssetsListSerializer
 from .renderers import CustomJSONRenderer
 
 
@@ -10,6 +10,18 @@ class CustomPagination(pagination.PageNumberPagination):
     page_size = 10
     page_size_query_param = 'per_page'
     max_page_size = 100
+
+
+# View  -- >  APIView --- > GenericApiView(mixins*) ---> ListApiView ---> Viewsets --> ModelViewsets
+
+
+# GET /assets/   多条
+# POST /assets/  新增一条
+
+# GET /assets/1/  单条
+# PUT /assets/1/  修改单条
+# DELETE /assetes/1/ 删除
+
 
 
 class AssetsCategoryAPIView(APIView):
@@ -34,7 +46,7 @@ class AssetsCategoryDetailAPIView(APIView):
             return None
 
     def get(self, request, pk):
-        category = self.get_object(pk)
+        category = AssetsCategory.objects.get(pk=pk, is_delete=False)
         if category is not None:
             serializer = AssetsCategorySerializer(category)
             return Response(serializer.data)
@@ -50,20 +62,12 @@ class AssetsCategoryDetailAPIView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def patch(self, request, pk):
-        category = self.get_object(pk)
-        if category is not None:
-            serializer = AssetsCategorySerializer(category, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
     def delete(self, request, pk):
         category = self.get_object(pk)
         if category is not None:
-            category.delete()
+            # category.delete()
+            category.is_delete = True
+            category.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -71,11 +75,11 @@ class AssetsCategoryDetailAPIView(APIView):
 class AssetsAPIView(APIView):
     def get(self, request):
         assets = Assets.objects.all()
-        serializer = AssetsSerializer(assets, many=True)
+        serializer = AssetsListSerializer(assets, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = AssetsSerializer(data=request.data)
+        serializer = AssetsListSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -92,14 +96,14 @@ class AssetsDetailAPIView(APIView):
     def get(self, request, pk):
         asset = self.get_object(pk)
         if asset is not None:
-            serializer = AssetsSerializer(asset)
+            serializer = AssetsListSerializer(asset)
             return Response(serializer.data)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, pk):
         asset = self.get_object(pk)
         if asset is not None:
-            serializer = AssetsSerializer(asset, data=request.data)
+            serializer = AssetsListSerializer(asset, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -109,7 +113,7 @@ class AssetsDetailAPIView(APIView):
     def patch(self, request, pk):
         asset = self.get_object(pk)
         if asset is not None:
-            serializer = AssetsSerializer(asset, data=request.data, partial=True)
+            serializer = AssetsListSerializer(asset, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)

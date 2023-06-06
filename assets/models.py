@@ -8,7 +8,7 @@ class BaseModel(models.Model):
     date_created = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, null=True, blank=True)
     date_updated = models.DateTimeField(verbose_name="更新时间", auto_now=True)
     desc = models.CharField(verbose_name="备注", max_length=255, null=True, blank=True)
-
+    is_delete = models.BooleanField(verbose_name="是否删除", default=False)
 
 
 class AssetsCategory(BaseModel):
